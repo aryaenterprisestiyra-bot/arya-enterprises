@@ -1,44 +1,28 @@
 from pathlib import Path
-import shutil, zipfile, html
+import base64, html
 
-base = Path("/mnt/data/arya_enterprises_website")
-if base.exists():
-    shutil.rmtree(base)
-(base / "images").mkdir(parents=True)
-
-# Copy the 8 uploaded product images
-srcs = [
-    ("/mnt/data/23679.png", "product-52-only-hindi.png"),
-    ("/mnt/data/23681.png", "product-52-mix.png"),
-    ("/mnt/data/23683.png", "product-104.png"),
-    ("/mnt/data/23684.png", "product-152.png"),
-    ("/mnt/data/23703.png", "product-128.png"),
-    ("/mnt/data/23741.png", "product-192.png"),
-    ("/mnt/data/23747.png", "product-256.png"),
-    ("/mnt/data/23748.png", "product-320.png"),
-]
-for src, name in srcs:
-    shutil.copy2(src, base / "images" / name)
-
-products = [
-    ("हिंदी एक्सरसाइज बुक", "52 पेज • केवल हिंदी", "₹5", "₹3", "product-52-only-hindi.png"),
-    ("हिंदी एक्सरसाइज बुक", "52 पेज • Hindi, English, Plain, Table, Mix", "₹10", "₹6", "product-52-mix.png"),
-    ("हिंदी एक्सरसाइज बुक", "104 पेज • Hindi, English, Plain, Table, Mix", "₹20", "₹14.50", "product-104.png"),
-    ("हिंदी एक्सरसाइज बुक", "152 पेज • Hindi, English, Plain, Table, Mix", "₹30", "₹22", "product-152.png"),
-    ("हिंदी एक्सरसाइज बुक", "128 पेज • Hindi, English, Plain, Table, Mix", "₹20", "₹14", "product-128.png"),
-    ("हिंदी एक्सरसाइज बुक", "192 पेज • केवल हिंदी", "₹30", "₹22", "product-192.png"),
-    ("हिंदी एक्सरसाइज बुक", "256 पेज • केवल हिंदी", "₹40", "₹30", "product-256.png"),
-    ("हिंदी एक्सरसाइज बुक", "320 पेज • केवल हिंदी", "₹50", "₹40", "product-320.png"),
+# Source images previously supplied in this chat
+sources = [
+    ("/mnt/data/23679.png", "हिंदी एक्सरसाइज बुक 52 पेज • केवल हिंदी", "₹5", "₹3"),
+    ("/mnt/data/23681.png", "हिंदी एक्सरसाइज बुक 52 पेज • Hindi, English, Plain, Table, Mix", "₹10", "₹6"),
+    ("/mnt/data/23683.png", "हिंदी एक्सरसाइज बुक 104 पेज • Hindi, English, Plain, Table, Mix", "₹20", "₹14.50"),
+    ("/mnt/data/23684.png", "हिंदी एक्सरसाइज बुक 152 पेज • Hindi, English, Plain, Table, Mix", "₹30", "₹22"),
+    ("/mnt/data/23703.png", "हिंदी एक्सरसाइज बुक 128 पेज • Hindi, English, Plain, Table, Mix", "₹20", "₹14"),
+    ("/mnt/data/23741.png", "हिंदी एक्सरसाइज बुक 192 पेज • केवल हिंदी", "₹30", "₹22"),
+    ("/mnt/data/23747.png", "हिंदी एक्सरसाइज बुक 256 पेज • केवल हिंदी", "₹40", "₹30"),
+    ("/mnt/data/23748.png", "हिंदी एक्सरसाइज बुक 320 पेज • केवल हिंदी", "₹50", "₹40"),
 ]
 
 cards = []
-for i, (name, details, mrp, wholesale, img) in enumerate(products, 1):
+for src, details, mrp, wholesale in sources:
+    p = Path(src)
+    data = base64.b64encode(p.read_bytes()).decode("ascii")
     cards.append(f"""
     <article class="card">
-      <img src="images/{img}" alt="{html.escape(name)} {html.escape(details)}">
+      <img src="data:image/png;base64,{data}" alt="{html.escape(details)}">
       <div class="info">
-        <h2>{name}</h2>
-        <p>{details}</p>
+        <h2>हिंदी एक्सरसाइज बुक</h2>
+        <p>{html.escape(details.split(" • ",1)[1])}</p>
         <div class="prices"><span class="mrp">MRP {mrp}</span><span class="wholesale">थोक {wholesale}</span></div>
         <a class="order" href="https://wa.me/919661835848?text=नमस्ते%20Arya%20Enterprises,%20मुझे%20हिंदी%20एक्सरसाइज%20बुक%20का%20थोक%20ऑर्डर%20करना%20है।" target="_blank">🛒 WhatsApp पर ऑर्डर करें</a>
       </div>
@@ -51,65 +35,31 @@ html_content = f"""<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Arya Enterprises | Exercise Books & Notebooks</title>
-<meta name="description" content="Arya Enterprises, Tiyara — हिंदी एक्सरसाइज बुक और नोटबुक के थोक ऑर्डर।">
 <style>
-*{{box-sizing:border-box}} body{{margin:0;font-family:Arial,'Noto Sans Devanagari',sans-serif;background:#f5f7fb;color:#172033}}
+*{{box-sizing:border-box}}body{{margin:0;font-family:Arial,'Noto Sans Devanagari',sans-serif;background:#f5f7fb;color:#172033}}
 header{{background:linear-gradient(135deg,#082b75,#0b63ce);color:#fff;padding:30px 16px;text-align:center}}
-header h1{{margin:0;font-size:38px}} header p{{margin:8px 0 0;font-size:17px}}
-.hero{{max-width:1100px;margin:22px auto 0;padding:0 16px}}
-.banner{{background:#fff;border-radius:18px;padding:20px;text-align:center;box-shadow:0 8px 25px #0001}}
-.banner h2{{margin:0 0 8px;color:#d71920;font-size:28px}} .banner p{{margin:6px 0}}
-.grid{{max-width:1100px;margin:22px auto;padding:0 16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}}
+header h1{{margin:0;font-size:38px}}header p{{margin:8px 0 0;font-size:17px}}
+.hero{{max-width:1100px;margin:22px auto;padding:0 16px}}.banner{{background:#fff;border-radius:18px;padding:20px;text-align:center;box-shadow:0 8px 25px #0001}}
+.banner h2{{margin:0 0 8px;color:#d71920;font-size:28px}}.banner p{{margin:6px 0}}
+.grid{{max-width:1100px;margin:0 auto 22px;padding:0 16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}}
 .card{{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 7px 22px #0001;border:1px solid #e5e9f2}}
 .card img{{width:100%;display:block;aspect-ratio:1/1;object-fit:cover;background:#eee}}
-.info{{padding:16px}} .info h2{{margin:0 0 7px;font-size:21px}} .info p{{margin:0 0 12px;color:#5d6677;min-height:42px}}
-.prices{{display:flex;gap:10px;align-items:center;margin-bottom:14px}} .mrp{{text-decoration:line-through;color:#777;font-weight:700}} .wholesale{{background:#e31d2a;color:#fff;padding:8px 12px;border-radius:10px;font-weight:800}}
+.info{{padding:16px}}.info h2{{margin:0 0 7px;font-size:21px}}.info p{{margin:0 0 12px;color:#5d6677;min-height:42px}}
+.prices{{display:flex;gap:10px;align-items:center;margin-bottom:14px}}.mrp{{text-decoration:line-through;color:#777;font-weight:700}}.wholesale{{background:#e31d2a;color:#fff;padding:8px 12px;border-radius:10px;font-weight:800}}
 .order{{display:block;text-align:center;text-decoration:none;background:#138a3d;color:#fff;padding:12px;border-radius:10px;font-weight:800}}
-.contact{{max-width:1100px;margin:0 auto 25px;padding:0 16px}}
-.contactbox{{background:#fff;border-radius:18px;padding:20px;text-align:center;box-shadow:0 7px 22px #0001}}
-.contactbox h2{{margin:0 0 8px}} .contactbox a{{color:#0b63ce;font-weight:800;text-decoration:none}}
-footer{{background:#101828;color:#fff;text-align:center;padding:22px 15px}} footer p{{margin:5px 0}}
-@media(max-width:500px){{header h1{{font-size:30px}} .banner h2{{font-size:23px}}}}
+.contact{{max-width:1100px;margin:0 auto 25px;padding:0 16px}}.contactbox{{background:#fff;border-radius:18px;padding:20px;text-align:center;box-shadow:0 7px 22px #0001}}
+.contactbox a{{color:#0b63ce;font-weight:800;text-decoration:none}}footer{{background:#101828;color:#fff;text-align:center;padding:22px}}
 </style>
 </head>
 <body>
-<header>
-  <h1>ARYA ENTERPRISES</h1>
-  <p>📚 Exercise Books & Notebooks • Tiyara</p>
-</header>
-<section class="hero">
-  <div class="banner">
-    <h2>हिंदी एक्सरसाइज बुक</h2>
-    <p>अच्छी क्वालिटी • आकर्षक कवर • थोक ऑर्डर की सुविधा</p>
-    <p><strong>स्कूल • कोचिंग • स्टेशनरी दुकानों के लिए उपयोगी</strong></p>
-  </div>
-</section>
-<main class="grid">
-{''.join(cards)}
-</main>
-<section class="contact">
-  <div class="contactbox">
-    <h2>🛒 थोक ऑर्डर के लिए संपर्क करें</h2>
-    <p>📞 <a href="tel:+919661835848">9661835848</a></p>
-    <p>📍 Tiyara, Buxar, Bihar</p>
-  </div>
-</section>
-<footer>
-  <p>© 2026 Arya Enterprises, Tiyara</p>
-  <p>सभी अधिकार सुरक्षित</p>
-</footer>
-</body>
-</html>"""
+<header><h1>ARYA ENTERPRISES</h1><p>📚 Exercise Books & Notebooks • Tiyara</p></header>
+<section class="hero"><div class="banner"><h2>हिंदी एक्सरसाइज बुक</h2><p>अच्छी क्वालिटी • आकर्षक कवर • थोक ऑर्डर की सुविधा</p><p><strong>स्कूल • कोचिंग • स्टेशनरी दुकानों के लिए उपयोगी</strong></p></div></section>
+<main class="grid">{''.join(cards)}</main>
+<section class="contact"><div class="contactbox"><h2>🛒 थोक ऑर्डर के लिए संपर्क करें</h2><p>📞 <a href="tel:+917079762220">9661835848</a></p><p>📍 Tiyara, Buxar, Bihar</p></div></section>
+<footer>© 2026 Arya Enterprises, Tiyara • सभी अधिकार सुरक्षित</footer>
+</body></html>"""
 
-(base / "index.html").write_text(html_content, encoding="utf-8")
-
-zip_path = Path("/mnt/data/Arya_Enterprises_Website_Ready.zip")
-if zip_path.exists():
-    zip_path.unlink()
-with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as z:
-    for p in base.rglob("*"):
-        if p.is_file():
-            z.write(p, p.relative_to(base))
-
-print(f"तैयार हो गया: {zip_path}")
-print("इस ZIP में index.html और सभी 8 product images हैं।")
+out = Path("/mnt/data/index_images_fixed.html")
+out.write_text(html_content, encoding="utf-8")
+print(f"सही फाइल तैयार है: {out}")
+print("इस फाइल में 8ों फोटो HTML के अंदर ही हैं, इसलिए अलग images folder की जरूरत नहीं होगी।")
