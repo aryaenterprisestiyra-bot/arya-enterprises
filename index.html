@@ -1,65 +1,294 @@
-from pathlib import Path
-import base64, html
-
-# Source images previously supplied in this chat
-sources = [
-    ("/mnt/data/23679.png", "हिंदी एक्सरसाइज बुक 52 पेज • केवल हिंदी", "₹5", "₹3"),
-    ("/mnt/data/23681.png", "हिंदी एक्सरसाइज बुक 52 पेज • Hindi, English, Plain, Table, Mix", "₹10", "₹6"),
-    ("/mnt/data/23683.png", "हिंदी एक्सरसाइज बुक 104 पेज • Hindi, English, Plain, Table, Mix", "₹20", "₹14.50"),
-    ("/mnt/data/23684.png", "हिंदी एक्सरसाइज बुक 152 पेज • Hindi, English, Plain, Table, Mix", "₹30", "₹22"),
-    ("/mnt/data/23703.png", "हिंदी एक्सरसाइज बुक 128 पेज • Hindi, English, Plain, Table, Mix", "₹20", "₹14"),
-    ("/mnt/data/23741.png", "हिंदी एक्सरसाइज बुक 192 पेज • केवल हिंदी", "₹30", "₹22"),
-    ("/mnt/data/23747.png", "हिंदी एक्सरसाइज बुक 256 पेज • केवल हिंदी", "₹40", "₹30"),
-    ("/mnt/data/23748.png", "हिंदी एक्सरसाइज बुक 320 पेज • केवल हिंदी", "₹50", "₹40"),
-]
-
-cards = []
-for src, details, mrp, wholesale in sources:
-    p = Path(src)
-    data = base64.b64encode(p.read_bytes()).decode("ascii")
-    cards.append(f"""
-    <article class="card">
-      <img src="data:image/png;base64,{data}" alt="{html.escape(details)}">
-      <div class="info">
-        <h2>हिंदी एक्सरसाइज बुक</h2>
-        <p>{html.escape(details.split(" • ",1)[1])}</p>
-        <div class="prices"><span class="mrp">MRP {mrp}</span><span class="wholesale">थोक {wholesale}</span></div>
-        <a class="order" href="https://wa.me/919661835848?text=नमस्ते%20Arya%20Enterprises,%20मुझे%20हिंदी%20एक्सरसाइज%20बुक%20का%20थोक%20ऑर्डर%20करना%20है।" target="_blank">🛒 WhatsApp पर ऑर्डर करें</a>
-      </div>
-    </article>
-    """)
-
-html_content = f"""<!doctype html>
+<!DOCTYPE html>
 <html lang="hi">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Arya Enterprises | Exercise Books & Notebooks</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ARYA ENTERPRISES | Exercise Books</title>
+
 <style>
-*{{box-sizing:border-box}}body{{margin:0;font-family:Arial,'Noto Sans Devanagari',sans-serif;background:#f5f7fb;color:#172033}}
-header{{background:linear-gradient(135deg,#082b75,#0b63ce);color:#fff;padding:30px 16px;text-align:center}}
-header h1{{margin:0;font-size:38px}}header p{{margin:8px 0 0;font-size:17px}}
-.hero{{max-width:1100px;margin:22px auto;padding:0 16px}}.banner{{background:#fff;border-radius:18px;padding:20px;text-align:center;box-shadow:0 8px 25px #0001}}
-.banner h2{{margin:0 0 8px;color:#d71920;font-size:28px}}.banner p{{margin:6px 0}}
-.grid{{max-width:1100px;margin:0 auto 22px;padding:0 16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}}
-.card{{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 7px 22px #0001;border:1px solid #e5e9f2}}
-.card img{{width:100%;display:block;aspect-ratio:1/1;object-fit:cover;background:#eee}}
-.info{{padding:16px}}.info h2{{margin:0 0 7px;font-size:21px}}.info p{{margin:0 0 12px;color:#5d6677;min-height:42px}}
-.prices{{display:flex;gap:10px;align-items:center;margin-bottom:14px}}.mrp{{text-decoration:line-through;color:#777;font-weight:700}}.wholesale{{background:#e31d2a;color:#fff;padding:8px 12px;border-radius:10px;font-weight:800}}
-.order{{display:block;text-align:center;text-decoration:none;background:#138a3d;color:#fff;padding:12px;border-radius:10px;font-weight:800}}
-.contact{{max-width:1100px;margin:0 auto 25px;padding:0 16px}}.contactbox{{background:#fff;border-radius:18px;padding:20px;text-align:center;box-shadow:0 7px 22px #0001}}
-.contactbox a{{color:#0b63ce;font-weight:800;text-decoration:none}}footer{{background:#101828;color:#fff;text-align:center;padding:22px}}
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial,"Noto Sans Devanagari",sans-serif;
+  background:#f5f7fb;
+  color:#222;
+}
+
+header{
+  background:linear-gradient(135deg,#0d6efd,#1647a5);
+  color:white;
+  text-align:center;
+  padding:28px 15px;
+}
+
+header h1{
+  margin:0;
+  font-size:30px;
+}
+
+header p{
+  margin:8px 0 0;
+  font-size:16px;
+}
+
+.container{
+  max-width:1100px;
+  margin:auto;
+  padding:20px 15px 100px;
+}
+
+.intro{
+  text-align:center;
+  margin-bottom:25px;
+}
+
+.intro h2{
+  margin:5px 0;
+  font-size:25px;
+}
+
+.intro p{
+  color:#666;
+}
+
+.products{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:20px;
+}
+
+.card{
+  background:white;
+  border-radius:15px;
+  overflow:hidden;
+  box-shadow:0 4px 15px rgba(0,0,0,.10);
+  border:1px solid #eee;
+}
+
+.card img{
+  width:100%;
+  height:280px;
+  object-fit:contain;
+  background:#fff;
+  padding:10px;
+}
+
+.info{
+  padding:15px;
+}
+
+.info h3{
+  margin:0 0 8px;
+  font-size:19px;
+}
+
+.details{
+  color:#666;
+  font-size:14px;
+  line-height:1.5;
+}
+
+.price{
+  margin:12px 0;
+  font-size:20px;
+  font-weight:bold;
+}
+
+.mrp{
+  color:#999;
+  text-decoration:line-through;
+  margin-right:10px;
+  font-size:16px;
+}
+
+.wholesale{
+  color:#0a8f3c;
+}
+
+.order{
+  display:block;
+  text-align:center;
+  background:#25D366;
+  color:white;
+  text-decoration:none;
+  padding:11px;
+  border-radius:8px;
+  font-weight:bold;
+  margin-top:10px;
+}
+
+.contact{
+  margin-top:30px;
+  background:white;
+  border-radius:15px;
+  padding:25px;
+  text-align:center;
+  box-shadow:0 4px 15px rgba(0,0,0,.08);
+}
+
+.contact h2{
+  margin-top:0;
+}
+
+.contact a{
+  display:inline-block;
+  margin-top:10px;
+  background:#25D366;
+  color:white;
+  padding:12px 25px;
+  border-radius:8px;
+  text-decoration:none;
+  font-weight:bold;
+}
+
+footer{
+  text-align:center;
+  padding:20px;
+  color:#666;
+  font-size:14px;
+}
 </style>
 </head>
-<body>
-<header><h1>ARYA ENTERPRISES</h1><p>📚 Exercise Books & Notebooks • Tiyara</p></header>
-<section class="hero"><div class="banner"><h2>हिंदी एक्सरसाइज बुक</h2><p>अच्छी क्वालिटी • आकर्षक कवर • थोक ऑर्डर की सुविधा</p><p><strong>स्कूल • कोचिंग • स्टेशनरी दुकानों के लिए उपयोगी</strong></p></div></section>
-<main class="grid">{''.join(cards)}</main>
-<section class="contact"><div class="contactbox"><h2>🛒 थोक ऑर्डर के लिए संपर्क करें</h2><p>📞 <a href="tel:+917079762220">9661835848</a></p><p>📍 Tiyara, Buxar, Bihar</p></div></section>
-<footer>© 2026 Arya Enterprises, Tiyara • सभी अधिकार सुरक्षित</footer>
-</body></html>"""
 
-out = Path("/mnt/data/index_images_fixed.html")
-out.write_text(html_content, encoding="utf-8")
-print(f"सही फाइल तैयार है: {out}")
-print("इस फाइल में 8ों फोटो HTML के अंदर ही हैं, इसलिए अलग images folder की जरूरत नहीं होगी।")
+<body>
+
+<header>
+  <h1>ARYA ENTERPRISES</h1>
+  <p>📚 Exercise Books & Notebooks • Tiyara</p>
+</header>
+
+<div class="container">
+
+  <div class="intro">
+    <h2>हिंदी एक्सरसाइज बुक</h2>
+    <p>अच्छी क्वालिटी • आकर्षक कवर • थोक ऑर्डर की सुविधा</p>
+    <p><b>स्कूल • कॉलेज • कोचिंग • स्टेशनरी दुकानों के लिए उपयोगी</b></p>
+  </div>
+
+  <div class="products">
+
+    <div class="card">
+      <img src="images/23679.png" alt="हिंदी एक्सरसाइज बुक 52 पेज">
+      <div class="info">
+        <h3>हिंदी एक्सरसाइज बुक</h3>
+        <div class="details">52 पेज • केवल हिंदी</div>
+        <div class="price">
+          <span class="mrp">MRP ₹5</span>
+          <span class="wholesale">थोक ₹3</span>
+        </div>
+        <a class="order" href="https://wa.me/917079762220?text=नमस्ते,%20मुझे%2052%20पेज%20हिंदी%20एक्सरसाइज%20बुक%20का%20थोक%20ऑर्डर%20करना%20है।">🛒 WhatsApp पर ऑर्डर करें</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <img src="images/23681.png" alt="हिंदी एक्सरसाइज बुक 52 पेज">
+      <div class="info">
+        <h3>हिंदी एक्सरसाइज बुक</h3>
+        <div class="details">52 पेज • Hindi, English, Plain, Table, Mix</div>
+        <div class="price">
+          <span class="mrp">MRP ₹10</span>
+          <span class="wholesale">थोक ₹6</span>
+        </div>
+        <a class="order" href="https://wa.me/917079762220?text=मुझे%2052%20पेज%20मिक्स%20एक्सरसाइज%20बुक%20का%20थोक%20ऑर्डर%20करना%20है।">🛒 WhatsApp पर ऑर्डर करें</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <img src="images/23683.png" alt="हिंदी एक्सरसाइज बुक 104 पेज">
+      <div class="info">
+        <h3>हिंदी एक्सरसाइज बुक</h3>
+        <div class="details">104 पेज • Hindi, English, Plain, Table, Mix</div>
+        <div class="price">
+          <span class="mrp">MRP ₹20</span>
+          <span class="wholesale">थोक ₹14.50</span>
+        </div>
+        <a class="order" href="https://wa.me/917079762220?text=मुझे%20104%20पेज%20एक्सरसाइज%20बुक%20का%20थोक%20ऑर्डर%20करना%20है।">🛒 WhatsApp पर ऑर्डर करें</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <img src="images/23684.png" alt="हिंदी एक्सरसाइज बुक 152 पेज">
+      <div class="info">
+        <h3>हिंदी एक्सरसाइज बुक</h3>
+        <div class="details">152 पेज • Hindi, English, Plain, Table, Mix</div>
+        <div class="price">
+          <span class="mrp">MRP ₹30</span>
+          <span class="wholesale">थोक ₹22</span>
+        </div>
+        <a class="order" href="https://wa.me/917079762220?text=मुझे%20152%20पेज%20एक्सरसाइज%20बुक%20का%20थोक%20ऑर्डर%20करना%20है।">🛒 WhatsApp पर ऑर्डर करें</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <img src="images/23703.png" alt="हिंदी एक्सरसाइज बुक 128 पेज">
+      <div class="info">
+        <h3>हिंदी एक्सरसाइज बुक</h3>
+        <div class="details">128 पेज • Hindi, English, Plain, Table, Mix</div>
+        <div class="price">
+          <span class="mrp">MRP ₹20</span>
+          <span class="wholesale">थोक ₹14</span>
+        </div>
+        <a class="order" href="https://wa.me/917079762220?text=मुझे%20128%20पेज%20एक्सरसाइज%20बुक%20का%20थोक%20ऑर्डर%20करना%20है।">🛒 WhatsApp पर ऑर्डर करें</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <img src="images/23741.png" alt="हिंदी एक्सरसाइज बुक 192 पेज">
+      <div class="info">
+        <h3>हिंदी एक्सरसाइज बुक</h3>
+        <div class="details">192 पेज • केवल हिंदी</div>
+        <div class="price">
+          <span class="mrp">MRP ₹30</span>
+          <span class="wholesale">थोक ₹22</span>
+        </div>
+        <a class="order" href="https://wa.me/917079762220?text=मुझे%20192%20पेज%20हिंदी%20बुक%20का%20थोक%20ऑर्डर%20करना%20है।">🛒 WhatsApp पर ऑर्डर करें</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <img src="images/23747.png" alt="हिंदी एक्सरसाइज बुक 256 पेज">
+      <div class="info">
+        <h3>हिंदी एक्सरसाइज बुक</h3>
+        <div class="details">256 पेज • केवल हिंदी</div>
+        <div class="price">
+          <span class="mrp">MRP ₹40</span>
+          <span class="wholesale">थोक ₹30</span>
+        </div>
+        <a class="order" href="https://wa.me/917079762220?text=मुझे%20256%20पेज%20हिंदी%20बुक%20का%20थोक%20ऑर्डर%20करना%20है।">🛒 WhatsApp पर ऑर्डर करें</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <img src="images/23748.png" alt="हिंदी एक्सरसाइज बुक 320 पेज">
+      <div class="info">
+        <h3>हिंदी एक्सरसाइज बुक</h3>
+        <div class="details">320 पेज • केवल हिंदी</div>
+        <div class="price">
+          <span class="mrp">MRP ₹50</span>
+          <span class="wholesale">थोक ₹40</span>
+        </div>
+        <a class="order" href="https://wa.me/917079762220?text=मुझे%20320%20पेज%20हिंदी%20बुक%20का%20थोक%20ऑर्डर%20करना%20है।">🛒 WhatsApp पर ऑर्डर करें</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="contact">
+    <h2>🛒 थोक ऑर्डर के लिए संपर्क करें</h2>
+    <p>ARYA ENTERPRISES • Tiyara, Buxar, Bihar</p>
+    <p>📞 7079762220</p>
+    <a href="https://wa.me/917079762220">WhatsApp पर संपर्क करें</a>
+  </div>
+
+</div>
+
+<footer>
+  © 2026 Arya Enterprises, Tiyara • सभी अधिकार सुरक्षित
+</footer>
+
+</body>
+</html>
